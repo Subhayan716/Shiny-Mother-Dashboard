@@ -123,9 +123,10 @@ ui <- navbarPage(
            br(),
            div(class="card-core",
                h4("Core Planning"),
-               actionButton("risk", "Risk Assessment",
-                            class="btn btn-success btn-custom"),
+               
                actionButton("plan", "Annual Audit Plan",
+                            class="btn btn-success btn-custom"),
+               actionButton("risk", "Individual Unit Plan",
                             class="btn btn-success btn-custom")
            )
   ),
@@ -138,16 +139,24 @@ ui <- navbarPage(
              column(6,
                     div(class="card-core",
                         h4("Core Modules"),
-                        actionButton("voucher", "Voucher Analysis",
+                        actionButton("voucher", "Voucher Sampling",
                                      class="btn btn-success btn-custom"),
-                        actionButton("tender", "Tender Analysis",
+                        actionButton("tender", "Tender Sampling",
+                                     class="btn btn-success btn-custom"),
+                        actionButton("contract", "Completed Contract Sampling",
+                                     class="btn btn-success btn-custom"),
+                        actionButton("JV", "Journal Voucher Sampling",
                                      class="btn btn-success btn-custom")
                     )
              ),
              column(6,
                     div(class="card-other",
                         h4("Other Modules"),
-                        actionButton("leave_sample", "Leave / PF Sampling",
+                        actionButton("pension_sample", "Pension Sampling",
+                                     class="btn btn-primary btn-custom"),
+                        actionButton("DCRG_sample", "DCRG Sampling",
+                                     class="btn btn-primary btn-custom"),
+                        actionButton("PF_sample", "PF Sampling",
                                      class="btn btn-primary btn-custom")
                     )
              )
@@ -164,14 +173,20 @@ ui <- navbarPage(
                         h4("Core Modules"),
                         actionButton("contract", "Contract Review",
                                      class="btn btn-success btn-custom"),
-                        actionButton("compliance", "Compliance Check",
+                        actionButton("voucher_review", "Voucher Review",
+                                     class="btn btn-success btn-custom"),
+                        actionButton("JV_review", "Journal Voucher Review",
                                      class="btn btn-success btn-custom")
                     )
              ),
              column(6,
                     div(class="card-other",
                         h4("Other Modules"),
-                        actionButton("leave_exec", "Leave / PF Audit",
+                        actionButton("Pension", "Pension Audit",
+                                     class="btn btn-primary btn-custom"),
+                        actionButton("DCRG", "DCRG Audit",
+                                     class="btn btn-primary btn-custom"),
+                        actionButton("PF", "PF Audit",
                                      class="btn btn-primary btn-custom")
                     )
              )
