@@ -1,6 +1,8 @@
 library(shiny)
 library(bslib)
 
+# ========================== UI ==========================
+
 ui <- navbarPage(
   
   title = div(
@@ -41,7 +43,6 @@ ui <- navbarPage(
       position: relative;
     }
     
-    /* GOLD STRIP */
     .navbar::after {
       content: '';
       display: block;
@@ -66,12 +67,10 @@ ui <- navbarPage(
       transform: translateY(-2px);
     }
     
-    /* ===== BACKGROUND ===== */
     body {
       background-color: #f4f6f9;
     }
     
-    /* ===== CORE MODULES (Enterprise Green) ===== */
     .card-core {
       background-color: #edf7ed;
       border-left: 6px solid #1b5e20;
@@ -86,7 +85,6 @@ ui <- navbarPage(
       box-shadow: 0 8px 20px rgba(0,0,0,0.12);
     }
     
-    /* ===== OTHER MODULES (Enterprise Blue) ===== */
     .card-other {
       background-color: #eef4fb;
       border-left: 6px solid #0d47a1;
@@ -101,7 +99,6 @@ ui <- navbarPage(
       box-shadow: 0 8px 20px rgba(0,0,0,0.12);
     }
     
-    /* ===== BUTTON STYLE ===== */
     .btn-custom {
       margin-bottom: 12px;
       width: 100%;
@@ -117,13 +114,12 @@ ui <- navbarPage(
     
   ")),
   
+  # ========================== TABS ==========================
   
-  # ---------------- Audit Planning ----------------
   tabPanel("Audit Planning",
            br(),
            div(class="card-core",
                h4("Core Planning"),
-               
                actionButton("plan", "Annual Audit Plan",
                             class="btn btn-success btn-custom"),
                actionButton("risk", "Individual Unit Plan",
@@ -131,8 +127,6 @@ ui <- navbarPage(
            )
   ),
   
-  
-  # ---------------- Audit Sampling ----------------
   tabPanel("Audit Sampling",
            br(),
            fluidRow(
@@ -143,7 +137,7 @@ ui <- navbarPage(
                                      class="btn btn-success btn-custom"),
                         actionButton("tender", "Tender Sampling",
                                      class="btn btn-success btn-custom"),
-                        actionButton("contract", "Completed Contract Sampling",
+                        actionButton("contract_sample", "Completed Contract Sampling",
                                      class="btn btn-success btn-custom"),
                         actionButton("JV", "Journal Voucher Sampling",
                                      class="btn btn-success btn-custom")
@@ -163,8 +157,6 @@ ui <- navbarPage(
            )
   ),
   
-  
-  # ---------------- Audit Execution ----------------
   tabPanel("Audit Execution",
            br(),
            fluidRow(
@@ -194,8 +186,72 @@ ui <- navbarPage(
   )
 )
 
+# ========================== SERVER ==========================
+
 server <- function(input, output, session) {
-  # Server logic placeholder
+  
+  PORTABLE_R_HOME <- "D:/Compliance Audit_Stores_19.12.21/R Dashboard/R"
+  APPS_HOME       <- "D:/Compliance Audit_Stores_19.12.21/R Dashboard/Apps"
+  
+  rscript_candidates <- c(
+    file.path(PORTABLE_R_HOME,"bin","Rscript.exe"),
+    file.path(PORTABLE_R_HOME,"bin","x64","Rscript.exe")
+  )
+  
+  rscript_path <- rscript_candidates[file.exists(rscript_candidates)][1]
+  
+  launch_subapp <- function(subfolder_name) {
+    
+    app_dir <- normalizePath(
+      file.path(APPS_HOME, subfolder_name),
+      winslash="/",
+      mustWork=FALSE
+    )
+    
+    if (!dir.exists(app_dir)) {
+      showModal(modalDialog(
+        title="App folder not found",
+        paste("Missing folder:", app_dir),
+        easyClose=TRUE
+      ))
+      return(NULL)
+    }
+    
+    cmd <- sprintf(
+      "shiny::runApp('%s', launch.browser=TRUE)",
+      app_dir
+    )
+    
+    system2(
+      rscript_path,
+      args=c("-e", shQuote(cmd)),
+      wait=FALSE
+    )
+  }
+  
+  app_map <- list(
+    JV="JV",
+    plan="Plan",
+    risk="Risk",
+    voucher="Voucher",
+    tender="Tender",
+    contract_sample="ContractSample",
+    pension_sample="PensionSample",
+    DCRG_sample="DCRGSample",
+    PF_sample="PFSample",
+    contract="Contract",
+    voucher_review="VoucherReview",
+    JV_review="JVReview",
+    Pension="Pension",
+    DCRG="DCRG",
+    PF="PF"
+  )
+  
+  lapply(names(app_map), function(btn_id){
+    observeEvent(input[[btn_id]],{
+      launch_subapp(app_map[[btn_id]])
+    }, ignoreInit=TRUE)
+  })
 }
 
 shinyApp(ui, server)
